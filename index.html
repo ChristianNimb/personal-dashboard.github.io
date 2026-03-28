@@ -773,8 +773,11 @@
 
         <div class="settings-section">
             <h3>🖼️ Custom Background</h3>
+            <input type="file" class="custom-bg-input" id="bg-file-upload" accept="image/*" style="padding: 8px; cursor: pointer;">
+            <button class="settings-btn-primary" onclick="uploadBackgroundImage()">Upload Image</button>
+            <div style="margin: 15px 0; text-align: center; opacity: 0.6; font-size: 12px;">— OR —</div>
             <input type="text" class="custom-bg-input" id="custom-bg-url" placeholder="Enter image URL...">
-            <button class="settings-btn-primary" onclick="setCustomBackground()">Set Background</button>
+            <button class="settings-btn-primary" onclick="setCustomBackground()">Use URL</button>
             <button class="settings-btn-primary" onclick="setUnsplashBackground()">Random Unsplash</button>
         </div>
 
@@ -1056,6 +1059,59 @@
             document.getElementById('settings-panel').classList.toggle('open');
         }
 
+        function uploadBackgroundImage() {
+            const fileInput = document.getElementById('bg-file-upload');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select an image first!');
+                return;
+            }
+
+            if (!file.type.startsWith('image/')) {
+                alert('Please select a valid image file!');
+                return;
+            }
+
+            // Check file size (limit to 5MB for performance)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Image is too large! Please choose an image under 5MB.');
+                return;
+            }
+
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const base64Image = e.target.result;
+                document.body.style.background = `url('${base64Image}')`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundPosition = 'center';
+                document.body.style.backgroundAttachment = 'fixed';
+                localStorage.setItem('customBg', base64Image);
+                localStorage.removeItem('theme');
+                updateThemeSelection();
+                
+                // Show success feedback
+                const uploadBtn = event.target;
+                const originalText = uploadBtn.textContent;
+                uploadBtn.textContent = '✓ Uploaded!';
+                uploadBtn.style.background = '#10b981';
+                setTimeout(() => {
+                    uploadBtn.textContent = originalText;
+                    uploadBtn.style.background = '';
+                }, 2000);
+                
+                // Clear the file input
+                fileInput.value = '';
+            };
+            
+            reader.onerror = function() {
+                alert('Error reading file. Please try again.');
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
         function setTheme(themeName) {
             document.body.style.background = themes[themeName];
             localStorage.setItem('theme', themeName);
@@ -1073,6 +1129,7 @@
                 localStorage.setItem('customBg', url);
                 localStorage.removeItem('theme');
                 updateThemeSelection();
+                document.getElementById('custom-bg-url').value = '';
             }
         }
 
