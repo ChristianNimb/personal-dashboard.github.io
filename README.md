@@ -64,6 +64,16 @@ Then point it to your `index.html` file location.
 4. **Add your name** for personalized greetings
 5. **Add quick links** by clicking the + button
 
+###User Flow:
+1. Click settings ⚙️
+2. Click "🖼️ Custom Background"
+3. Click "Choose File"
+4. Select image from computer
+5. Click "Upload Image"
+6. ✓ Background changes instantly!
+7. Close settings
+8. Enjoy your custom background
+
 ### Features
 
 - **Search:** Type in the top bar, press Enter
