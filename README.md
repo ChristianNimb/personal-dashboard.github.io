@@ -20,7 +20,7 @@ A beautiful, customizable browser start page with weather, tasks, quick links, a
 
 ## 🚀 Live Demo
 
-**[View Live Demo](https://christiannimb.github.io/personal-dashboard/)**
+**[View Live Demo](https://christiannimb.github.io/personal-dashboard.github.io/)**
 
 ## 📸 Screenshots
 
