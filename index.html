@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --bg-overlay: rgba(0, 0, 0, 0.4);
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --card-border: rgba(255, 255, 255, 0.2);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-primary);
+            overflow-x: hidden;
+            transition: background 0.5s ease;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-overlay);
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        /* Search Bar */
+        .search-section {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .search-bar {
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 16px 50px 16px 20px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 50px;
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        /* Clock Section */
+        .clock-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .time {
+            font-size: clamp(48px, 8vw, 80px);
+            font-weight: 300;
+            text-shadow: 2px 2px 20px rgba(0, 0, 0, 0.3);
+            letter-spacing: -2px;
+            margin-bottom: 10px;
+        }
+
+        .date {
+            font-size: clamp(16px, 3vw, 22px);
+            opacity: 0.9;
+        }
+
+        .greeting {
+            font-size: clamp(20px, 4vw, 32px);
+            margin-top: 15px;
+            font-weight: 400;
+        }
+
+        /* Weather Widget */
+        .weather-section {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .weather {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 16px 24px;
+            border: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .weather:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .weather-icon {
+            font-size: 36px;
+        }
+
+        .weather-temp {
+            font-size: 32px;
+            font-weight: 300;
+        }
+
+        .weather-details {
+            text-align: left;
+        }
+
+        .weather-location {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .weather-condition {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            flex: 1;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            background: rgba(255, 255, 255, 0.18);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Quick Links */
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 12px;
+        }
+
+        .link-item {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 16px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 90px;
+        }
+
+        .link-item:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px) scale(1.05);
+        }
+
+        .link-icon {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .link-name {
+            font-size: 12px;
+            word-break: break-word;
+        }
+
+        .add-link-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px dashed rgba(255, 255, 255, 0.4);
+        }
+
+        .add-link-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Todo List */
+        .todo-input-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .todo-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            color: white;
+            font-size: 14px;
+        }
+
+        .todo-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .todo-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.25);
+            border-color: var(--primary);
+        }
+
+        .add-todo-btn {
+            background: var(--primary);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 20px;
+            color: white;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .add-todo-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.05);
+        }
+
+        .todo-list {
+            max-height: 350px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .todo-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .todo-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .todo-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        .todo-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .todo-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .todo-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .todo-text {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .todo-text.completed {
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+
+        .delete-todo {
+            background: rgba(239, 68, 68, 0.3);
+            border: none;
+            border-radius: 6px;
+            padding: 6px 10px;
+            color: white;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.3s ease;
+        }
+
+        .delete-todo:hover {
+            background: rgba(239, 68, 68, 0.5);
+        }
+
+        /* Quote */
+        .quote-container {
+            text-align: center;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+        }
+
+        .quote-text {
+            font-size: 18px;
+            font-style: italic;
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+
+        .quote-author {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .refresh-quote {
+            margin-top: 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            color: white;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-quote:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Settings Button */
+        .settings-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 24px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .settings-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        /* Settings Panel */
+        .settings-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 999;
+            padding: 30px;
+            overflow-y: auto;
+            transition: right 0.3s ease;
+            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .settings-panel.open {
+            right: 0;
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .settings-header h2 {
+            font-size: 24px;
+        }
+
+        .close-settings {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            color: white;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .close-settings:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .settings-section {
+            margin-bottom: 30px;
+        }
+
+        .settings-section h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .theme-option {
+            height: 70px;
+            border-radius: 12px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-option:hover {
+            border-color: white;
+            transform: scale(1.05);
+        }
+
+        .theme-option.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+        }
+
+        .theme-option::after {
+            content: '✓';
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--primary);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .theme-option.active::after {
+            display: flex;
+        }
+
+        .custom-bg-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .custom-bg-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .settings-btn-primary {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .settings-btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(30, 30, 40, 0.98);
+            backdrop-filter: blur(20px);
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 100%;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .modal-content input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn.primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .modal-btn.primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .modal-btn.secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .modal-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .time {
+                font-size: 48px;
+            }
+            
+            .settings-panel {
+                width: 100%;
+                right: -100%;
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .links-grid {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+    
+    <div class="container">
+        <!-- Search Bar -->
+        <div class="search-section">
+            <div class="search-bar">
+                <input type="text" class="search-input" id="search-input" placeholder="Search Google or type a URL...">
+                <button class="search-btn" onclick="performSearch()">🔍</button>
+            </div>
+        </div>
+
+        <!-- Clock Section -->
+        <div class="clock-section">
+            <div class="greeting" id="greeting">Good Morning</div>
+            <div class="time" id="clock">00:00:00</div>
+            <div class="date" id="date">Loading...</div>
+        </div>
+
+        <!-- Weather -->
+        <div class="weather-section">
+            <div class="weather" onclick="toggleSettings()">
+                <div class="weather-icon" id="weather-icon">🌤️</div>
+                <div class="weather-temp" id="weather-temp">--°</div>
+                <div class="weather-details">
+                    <div class="weather-location" id="weather-location">Loading...</div>
+                    <div class="weather-condition" id="weather-condition">--</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Quick Links -->
+            <div class="card">
+                <h2>🔗 Quick Links</h2>
+                <div class="links-grid" id="links-grid">
+                    <div class="link-item add-link-btn" onclick="openAddLinkModal()">+</div>
+                </div>
+            </div>
+
+            <!-- Todo List -->
+            <div class="card">
+                <h2>✅ Tasks</h2>
+                <div class="todo-input-container">
+                    <input type="text" class="todo-input" id="todo-input" placeholder="Add a new task...">
+                    <button class="add-todo-btn" onclick="addTodo()">Add</button>
+                </div>
+                <div class="todo-list" id="todo-list"></div>
+            </div>
+
+            <!-- Quote -->
+            <div class="card">
+                <h2>💭 Inspiration</h2>
+                <div class="quote-container">
+                    <div class="quote-text" id="quote-text">Loading...</div>
+                    <div class="quote-author" id="quote-author"></div>
+                    <button class="refresh-quote" onclick="loadQuote()">New Quote</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Button -->
+    <div class="settings-btn" onclick="toggleSettings()">⚙️</div>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settings-panel">
+        <div class="settings-header">
+            <h2>Settings</h2>
+            <button class="close-settings" onclick="toggleSettings()">✕</button>
+        </div>
+
+        <div class="settings-section">
+            <h3>🎨 Themes</h3>
+            <div class="theme-grid">
+                <div class="theme-option" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);" onclick="setTheme('gradient1')"></div>
+                <div class="theme-option" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);" onclick="setTheme('gradient2')"></div>
+                <div class="theme-option" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);" onclick="setTheme('gradient3')"></div>
+                <div class="theme-option" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);" onclick="setTheme('gradient4')"></div>
+                <div class="theme-option" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);" onclick="setTheme('gradient5')"></div>
+                <div class="theme-option" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);" onclick="setTheme('gradient6')"></div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h3>🖼️ Custom Background</h3>
+            <input type="text" class="custom-bg-input" id="custom-bg-url" placeholder="Enter image URL...">
+            <button class="settings-btn-primary" onclick="setCustomBackground()">Set Background</button>
+            <button class="settings-btn-primary" onclick="setUnsplashBackground()">Random Unsplash</button>
+        </div>
+
+        <div class="settings-section">
+            <h3>📍 Weather Location</h3>
+            <input type="text" class="custom-bg-input" id="weather-location-input" placeholder="Enter city name...">
+            <button class="settings-btn-primary" onclick="updateWeatherLocation()">Update Location</button>
+        </div>
+
+        <div class="settings-section">
+            <h3>👤 Your Name</h3>
+            <input type="text" class="custom-bg-input" id="name-input" placeholder="Enter your name...">
+            <button class="settings-btn-primary" onclick="updateName()">Save Name</button>
+        </div>
+    </div>
+
+    <!-- Add Link Modal -->
+    <div class="modal" id="add-link-modal">
+        <div class="modal-content">
+            <h3>Add Quick Link</h3>
+            <input type="text" id="link-name" placeholder="Name (e.g., Gmail)">
+            <input type="text" id="link-url" placeholder="URL (e.g., https://gmail.com)">
+            <input type="text" id="link-icon" placeholder="Emoji Icon (e.g., 📧)">
+            <div class="modal-buttons">
+                <button class="modal-btn secondary" onclick="closeAddLinkModal()">Cancel</button>
+                <button class="modal-btn primary" onclick="saveLink()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Quotes
+        const quotes = [
+            { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+            { text: "Code is like humor. When you have to explain it, it's bad.", author: "Cory House" },
+            { text: "First, solve the problem. Then, write the code.", author: "John Johnson" },
+            { text: "Experience is the name everyone gives to their mistakes.", author: "Oscar Wilde" },
+            { text: "In order to be irreplaceable, one must always be different.", author: "Coco Chanel" },
+            { text: "Java is to JavaScript what car is to Carpet.", author: "Chris Heilmann" },
+            { text: "Sometimes it pays to stay in bed on Monday, rather than spending the rest of the week debugging Monday's code.", author: "Dan Salomon" },
+            { text: "Perfection is achieved not when there is nothing more to add, but rather when there is nothing more to take away.", author: "Antoine de Saint-Exupery" },
+            { text: "The best error message is the one that never shows up.", author: "Thomas Fuchs" },
+            { text: "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.", author: "Martin Fowler" },
+            { text: "Walking on water and developing software from a specification are easy if both are frozen.", author: "Edward V. Berard" },
+            { text: "It's not a bug – it's an undocumented feature.", author: "Anonymous" },
+            { text: "Before software can be reusable it first has to be usable.", author: "Ralph Johnson" },
+            { text: "Make it work, make it right, make it fast.", author: "Kent Beck" },
+            { text: "Programs must be written for people to read, and only incidentally for machines to execute.", author: "Harold Abelson" }
+        ];
+
+        // Themes
+        const themes = {
+            gradient1: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            gradient2: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+            gradient3: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+            gradient4: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+            gradient5: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+            gradient6: 'linear-gradient(135deg, #30cfd0 0%, #330867 100%)'
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateClock();
+            setInterval(updateClock, 1000);
+            updateGreeting();
+            loadWeather();
+            loadQuote();
+            loadTodos();
+            loadLinks();
+            loadTheme();
+            
+            document.getElementById('todo-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') addTodo();
+            });
+
+            document.getElementById('search-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') performSearch();
+            });
+        });
+
+        // Search
+        function performSearch() {
+            const query = document.getElementById('search-input').value.trim();
+            if (query) {
+                if (query.includes('.') && !query.includes(' ')) {
+                    window.location.href = query.startsWith('http') ? query : 'https://' + query;
+                } else {
+                    window.location.href = 'https://www.google.com/search?q=' + encodeURIComponent(query);
+                }
+            }
+        }
+
+        // Clock & Greeting
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+            
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('date').textContent = now.toLocaleDateString('en-US', options);
+        }
+
+        function updateGreeting() {
+            const hour = new Date().getHours();
+            const name = localStorage.getItem('userName') || 'there';
+            let greeting = 'Good Evening';
+            
+            if (hour < 12) greeting = 'Good Morning';
+            else if (hour < 18) greeting = 'Good Afternoon';
+            
+            document.getElementById('greeting').textContent = `${greeting}, ${name}`;
+        }
+
+        function updateName() {
+            const name = document.getElementById('name-input').value.trim();
+            if (name) {
+                localStorage.setItem('userName', name);
+                updateGreeting();
+                document.getElementById('name-input').value = '';
+            }
+        }
+
+        // Weather
+        async function loadWeather() {
+            const city = localStorage.getItem('weatherCity') || 'London';
+            try {
+                const response = await fetch(`https://wttr.in/${city}?format=j1`);
+                const data = await response.json();
+                
+                const temp = data.current_condition[0].temp_C;
+                const condition = data.current_condition[0].weatherDesc[0].value;
+                const weatherCode = data.current_condition[0].weatherCode;
+                
+                document.getElementById('weather-temp').textContent = `${temp}°C`;
+                document.getElementById('weather-location').textContent = city;
+                document.getElementById('weather-condition').textContent = condition;
+                document.getElementById('weather-icon').textContent = getWeatherIcon(weatherCode);
+            } catch (error) {
+                console.error('Weather fetch failed:', error);
+                document.getElementById('weather-temp').textContent = '--°';
+                document.getElementById('weather-location').textContent = 'Weather unavailable';
+            }
+        }
+
+        function getWeatherIcon(code) {
+            const icons = {
+                113: '☀️', 116: '⛅', 119: '☁️', 122: '☁️', 143: '🌫️',
+                176: '🌦️', 179: '🌨️', 182: '🌨️', 185: '🌨️', 200: '⛈️',
+                227: '🌨️', 230: '❄️', 248: '🌫️', 260: '🌫️', 263: '🌦️',
+                266: '🌦️', 281: '🌨️', 284: '🌨️', 293: '🌧️', 296: '🌧️',
+                299: '🌧️', 302: '🌧️', 305: '🌧️', 308: '🌧️', 311: '🌨️',
+                314: '🌨️', 317: '🌨️', 320: '🌨️', 323: '🌨️', 326: '🌨️',
+                329: '❄️', 332: '❄️', 335: '❄️', 338: '❄️', 350: '🌨️',
+                353: '🌦️', 356: '🌧️', 359: '🌧️', 362: '🌨️', 365: '🌨️',
+                368: '🌨️', 371: '❄️', 374: '🌨️', 377: '🌨️', 386: '⛈️',
+                389: '⛈️', 392: '⛈️', 395: '❄️'
+            };
+            return icons[code] || '🌤️';
+        }
+
+        function updateWeatherLocation() {
+            const location = document.getElementById('weather-location-input').value.trim();
+            if (location) {
+                localStorage.setItem('weatherCity', location);
+                loadWeather();
+                document.getElementById('weather-location-input').value = '';
+            }
+        }
+
+        // Quotes
+        function loadQuote() {
+            const quote = quotes[Math.floor(Math.random() * quotes.length)];
+            document.getElementById('quote-text').textContent = `"${quote.text}"`;
+            document.getElementById('quote-author').textContent = `— ${quote.author}`;
+        }
+
+        // Todos
+        function loadTodos() {
+            const todos = JSON.parse(localStorage.getItem('todos') || '[]');
+            const todoList = document.getElementById('todo-list');
+            todoList.innerHTML = '';
+            
+            todos.forEach((todo, index) => {
+                const todoItem = document.createElement('div');
+                todoItem.className = 'todo-item';
+                todoItem.innerHTML = `
+                    <input type="checkbox" class="todo-checkbox" ${todo.completed ? 'checked' : ''} onchange="toggleTodo(${index})">
+                    <span class="todo-text ${todo.completed ? 'completed' : ''}">${todo.text}</span>
+                    <button class="delete-todo" onclick="deleteTodo(${index})">Delete</button>
+                `;
+                todoList.appendChild(todoItem);
+            });
+        }
+
+        function addTodo() {
+            const input = document.getElementById('todo-input');
+            const text = input.value.trim();
+            
+            if (text) {
+                const todos = JSON.parse(localStorage.getItem('todos') || '[]');
+                todos.push({ text, completed: false });
+                localStorage.setItem('todos', JSON.stringify(todos));
+                input.value = '';
+                loadTodos();
+            }
+        }
+
+        function toggleTodo(index) {
+            const todos = JSON.parse(localStorage.getItem('todos') || '[]');
+            todos[index].completed = !todos[index].completed;
+            localStorage.setItem('todos', JSON.stringify(todos));
+            loadTodos();
+        }
+
+        function deleteTodo(index) {
+            const todos = JSON.parse(localStorage.getItem('todos') || '[]');
+            todos.splice(index, 1);
+            localStorage.setItem('todos', JSON.stringify(todos));
+            loadTodos();
+        }
+
+        // Quick Links
+        function loadLinks() {
+            const defaultLinks = [
+                { name: 'GitHub', url: 'https://github.com', icon: '💻' },
+                { name: 'Gmail', url: 'https://gmail.com', icon: '📧' },
+                { name: 'YouTube', url: 'https://youtube.com', icon: '▶️' },
+                { name: 'Twitter', url: 'https://twitter.com', icon: '🐦' },
+                { name: 'Reddit', url: 'https://reddit.com', icon: '🔴' },
+                { name: 'ChatGPT', url: 'https://chat.openai.com', icon: '🤖' }
+            ];
+            
+            const links = JSON.parse(localStorage.getItem('links') || JSON.stringify(defaultLinks));
+            const linksGrid = document.getElementById('links-grid');
+            linksGrid.innerHTML = '<div class="link-item add-link-btn" onclick="openAddLinkModal()">+</div>';
+            
+            links.forEach((link, index) => {
+                const linkItem = document.createElement('a');
+                linkItem.className = 'link-item';
+                linkItem.href = link.url;
+                linkItem.target = '_blank';
+                linkItem.innerHTML = `
+                    <div class="link-icon">${link.icon}</div>
+                    <div class="link-name">${link.name}</div>
+                `;
+                linksGrid.insertBefore(linkItem, linksGrid.lastChild);
+            });
+        }
+
+        function openAddLinkModal() {
+            document.getElementById('add-link-modal').classList.add('show');
+        }
+
+        function closeAddLinkModal() {
+            document.getElementById('add-link-modal').classList.remove('show');
+            document.getElementById('link-name').value = '';
+            document.getElementById('link-url').value = '';
+            document.getElementById('link-icon').value = '';
+        }
+
+        function saveLink() {
+            const name = document.getElementById('link-name').value.trim();
+            const url = document.getElementById('link-url').value.trim();
+            const icon = document.getElementById('link-icon').value.trim() || '🔗';
+            
+            if (name && url) {
+                const links = JSON.parse(localStorage.getItem('links') || '[]');
+                links.push({ name, url, icon });
+                localStorage.setItem('links', JSON.stringify(links));
+                closeAddLinkModal();
+                loadLinks();
+            }
+        }
+
+        // Settings
+        function toggleSettings() {
+            document.getElementById('settings-panel').classList.toggle('open');
+        }
+
+        function setTheme(themeName) {
+            document.body.style.background = themes[themeName];
+            localStorage.setItem('theme', themeName);
+            localStorage.removeItem('customBg');
+            updateThemeSelection();
+        }
+
+        function setCustomBackground() {
+            const url = document.getElementById('custom-bg-url').value.trim();
+            if (url) {
+                document.body.style.background = `url('${url}')`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundPosition = 'center';
+                document.body.style.backgroundAttachment = 'fixed';
+                localStorage.setItem('customBg', url);
+                localStorage.removeItem('theme');
+                updateThemeSelection();
+            }
+        }
+
+        function setUnsplashBackground() {
+            const url = `https://source.unsplash.com/random/1920x1080?nature,landscape&${Date.now()}`;
+            document.body.style.background = `url('${url}')`;
+            document.body.style.backgroundSize = 'cover';
+            document.body.style.backgroundPosition = 'center';
+            document.body.style.backgroundAttachment = 'fixed';
+            localStorage.setItem('customBg', url);
+            localStorage.removeItem('theme');
+            updateThemeSelection();
+        }
+
+        function loadTheme() {
+            const customBg = localStorage.getItem('customBg');
+            const theme = localStorage.getItem('theme');
+            
+            if (customBg) {
+                document.body.style.background = `url('${customBg}')`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundPosition = 'center';
+                document.body.style.backgroundAttachment = 'fixed';
+            } else if (theme) {
+                document.body.style.background = themes[theme];
+            }
+            
+            updateThemeSelection();
+            updateGreeting();
+        }
+
+        function updateThemeSelection() {
+            document.querySelectorAll('.theme-option').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            const theme = localStorage.getItem('theme');
+            if (theme) {
+                const index = Object.keys(themes).indexOf(theme);
+                if (index >= 0) {
+                    document.querySelectorAll('.theme-option')[index].classList.add('active');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
