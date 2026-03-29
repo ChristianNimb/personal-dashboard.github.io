@@ -23,6 +23,10 @@ A beautiful, customizable browser start page with weather, tasks, quick links, a
 **[View Live Demo](https://christiannimb.github.io/personal-dashboard.github.io/)**
 
 ## 📸 Screenshots
+<img width="3742" height="1917" alt="Screenshot 2026-03-29 221030" src="https://github.com/user-attachments/assets/0aa1d52d-660a-4b5b-8613-358f582dca22" />
+
+
+
 
 *Beautiful, glassmorphic design with smooth animations*
 
@@ -39,7 +43,7 @@ A beautiful, customizable browser start page with weather, tasks, quick links, a
 
 ### Use as Browser Start Page
 
-1. **Download** the `index.html` file
+1. **Download** the `index.html`,`styles.css` and `web.js` file
 2. **Open** your browser settings:
    - **Chrome:** Settings → On startup → Open a specific page
    - **Firefox:** Settings → Home → Custom URLs
@@ -128,7 +132,7 @@ This project is licensed under the MIT License - see below:
 ```
 MIT License
 
-Copyright (c) 2025 Christian Nimb
+Copyright (c) 2028 Christian Nimb
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
